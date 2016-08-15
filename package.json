@@ -1,0 +1,20 @@
+{
+  "name": "ff-media",
+  "description": "Displays a fantasy football draft results",
+  "version": "1.0.0",
+  "homepage": "https://github.com/twtaylor/ff-media",
+  "repository": "https://github.com/twtaylor/ff-media",
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {},
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node app/server.js"
+  },
+  "dependencies": {
+    "array": "^0.4.3",
+    "async": "^2.0.1",
+    "google-spreadsheet": "^2.0.3",
+    "mongoose": "^4.5.8"
+  }
+}

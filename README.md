@@ -1,1 +1,3 @@
-# ff-media
+# Fantasy Football media
+
+Readme forthcoming

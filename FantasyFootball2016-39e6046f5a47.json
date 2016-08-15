@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "fantasyfootball2016-764f5",
+  "private_key_id": "39e6046f5a47e19ab299daf1264760f517349d79",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDnBagh/P133oYX\nKjdwHL7bI3s4PF47/FMR79yEcQviElnLFzUIWmp1P9teDcrYGpYbMaTqADNBTrU7\n82cWuCa6U5l4Zq/xrDgONIgxqbO0FNIyjAqnoiKpXSujzjuIUbFCulPVglzzd6u7\nU5FaYHVGaB7UmURguyXwfxEUCPjZjyPvamNicg9d4SttJv9RSFGTmU1NoDD+22e5\nfJZ7KbYyQf0p/SZMQRTiCBAp3BVDPjWcvrZfvPPvgOBehpkcDR6l7FzdfszWprMN\n09f4neZ4NdLxRoSIRGaH6I9ZpsI9qJd00pfHVqoN3RrnYgftyWvFafiDidyooaAb\nOHd9dVtnAgMBAAECggEASOtiLIg8QS+9x2YN5ZdNLsI+THvRisGUPt8lDbDY/Vyp\ndw82MBLJ84Raa4+S7S9HHgJHeYzioMSFNA0aBvPNVZa5pGVVN8USVHmEW5ijHj5M\nMqQ9YLgulKLR+XxJEjgm6VcCyyvAxyCI1jIEeTBlE/odcSGHkbjAuu6Ap4BFe/W2\n6xwVwZx7UruPsJ8ddN896KG2IJQHP1V1UgAGIwam0hjsmSgeGyHbqE5oJRqkE/SJ\nQW6P+6xj+zAsb90vr9xnK2iWengMlPkmvStjkk2fX5IE2h9BMHrnqg/GGek71bvy\nxqhzvrBBHCerlfKqyEqjl9jI7AzLy80+06JJgA/LIQKBgQD2OwC2tibV6Rvpxkp9\nkqcp9d9kWZOfuEboVkmytgNoS9ArFEu1YjfPpwCnGYaDllK4QqET5FWyDGhlfccr\ntgqcdG+MNChn6SjTsdIJ7n8/FXhA1pNl6YnP988WTjQpkJa9fhx7gKphzFVBgj/A\nhvs2Su+Ct0cckjqyo39M4veKyQKBgQDwMC4pi7fxtmyReL1+J+lrCh2fXWmPLgSv\nm/YGdUSs/AGEPeFE6ogcF6JYqPB+9NBlpBL5Z59lof+cHjvn5zWITyRuNqjNXUuh\npq3qFhWfrGHjPIh1FCWJHHHhq9e1ILWSv1pUIAMJgcypCUeYLVc7aaSaBejOlY9c\n73rUStOcrwKBgAFFGKHYmqarxxsTjLrNENOkkvxfgeVm++ai20pyqd3V1kMCnclX\nslX91IEIHqt7EP4mSdJicRaz/a3YUjilfbSE3TZp5nNyvmUpG541fq6Cm9YpxSTX\naYCLFKRWzuoP9tcPWXJBnZ9XgHEQDOgfShhjloykCVfaYTcepL9uxDwRAoGAJ5H4\nePXAxzyjpE+9AES5Ct5uxOuR0XnmYbwTCztUph8abNv4+e6dn+sw3uRuQqw4jRY7\n3gT5WLgYsXK1sd4AjsVjHhk5NCQzqp0YN+GNjHHM6q/1VzyLdoxOIry52+hYoaWO\nzx87ANz2h760odiOb4ZXDNz+XtJ6/PejR8hQFpcCgYEAmKx0X9o9f9MGpzCL1E1D\nDArss9PUboo3gfizhqpy4dvJLhm18SW2RnZWvBJ9sAFv3aGgeT6uyybbQ0hWXmWf\n2EW5zwtSvkcwqonSivIYsD5mZqR2rH9i0DCZf5HkwT0Cob8BLFPb3Yh40VUYQhRk\nrvG+f1csHDAOCyPyZyQUr/o=\n-----END PRIVATE KEY-----\n",
+  "client_email": "fantasyfootball2016-764f5@appspot.gserviceaccount.com",
+  "client_id": "115148909509407200919",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fantasyfootball2016-764f5%40appspot.gserviceaccount.com"
+}

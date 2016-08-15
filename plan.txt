@@ -1,0 +1,76 @@
+
+
+technologies this is running on - 
+	1) mongo
+	2) node 
+		a) express?
+		b) google-spreadsheet plug-in - 
+
+
+all views -
+	1) login functionality 
+		for your selected view
+	2) connect to a specific session
+	
+3 views - 
+	1) player-client
+		a) view selected players
+		b) view media - OPTIONAL REQ
+		c) QUEUE PICKS - OPTIONAL REQ
+		
+	2) viewer-client
+		a) view selected players ( ALL MODE )
+		b) view video, gifs, play sounds
+		
+	3) admin-client - don't have to do this with google sheets
+		a) start session
+		b) pause session
+		c) rollback pick - don't have to do this with google sheets integration
+		
+		
+session definition
+	a running fantasy football draft with the players coming from the google spreadsheet
+	
+----
+
+phase 1a - viewer client - view video, gifs, play sounds :
+
+DONE: 
+
+google sheets - attach videos to each individual player
+viewer client - create a way to view the google sheets data 
+
+viewer client - pull down videos from each individual player; cache locally (320 rows max)
+
+viewer client - cache items in mongo per-session
+
+viewer client - pull down choices from each individual player; cache locally for triggers
+
+
+IN PROGRESS:
+
+
+FUTURE: 
+
+viewer client - create a login page
+viewer client - poll server when status changes 
+
+viewer client - display video to user
+
+
+
+phase 1b - viewer client - view selected players on draft board:
+
+phase 2: integrate admin options
+
+
+phase 3: integrate player selecting options for players
+
+	
+	
+---- 
+
+obj:
+
+	trying to help anthony out
+	trying to play media on a player pick  
