@@ -1,0 +1,12 @@
+{
+  "name": "ff-media",
+  "description": "",
+  "version": "1.0.0",
+  "homepage": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "jquery": "^3.1.0",
+    "angular": "angularjs#^1.5.8"
+  }
+}

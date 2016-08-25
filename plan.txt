@@ -38,6 +38,7 @@ phase 1a - viewer client - view video, gifs, play sounds :
 DONE: 
 
 google sheets - attach videos to each individual player
+
 viewer client - create a way to view the google sheets data 
 
 viewer client - pull down videos from each individual player; cache locally (320 rows max)
@@ -49,14 +50,20 @@ viewer client - pull down choices from each individual player; cache locally for
 
 IN PROGRESS:
 
+viewer client - create server service where you can see users
+
+server - create service where you can see users that were just picked
+
+viewer client - poll server when status changes 
+
+server - setup cron task to retrieve any updates every 10 seconds
+
 
 FUTURE: 
 
 viewer client - create a login page
-viewer client - poll server when status changes 
 
 viewer client - display video to user
-
 
 
 phase 1b - viewer client - view selected players on draft board:
