@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      h2 { font: 26px Helvetica, Arial; color: blue; }
+      form { background: #000; color: red; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; margin-right: .5%; float: left; }
+      form p { float: left; width: 10%; }
+      form button { background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <!--<button>Send</button>
+      <input id="m" autocomplete="off" />-->
+      <p>Enable YouTube autoplay</p>
+      <input id="youtubeAutoplay" type="checkbox" checked>
+      <button>Reset everything (not working yet)</button>
+    </form>
+    <script src="//cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var getAutoPlayStatus = function () {
+        // determine auto play status
+          var autoPlay = 0;
+          if ($('#youtubeAutoplay').is(':checked')) {
+            autoPlay = 1;
+          }
+          return autoPlay;
+      }
+      
+      var renderHead = function (doc) {
+        var ret = '';
+        
+        ret = '<h2>' + doc.player + '</h2>';
+        
+        return ret;
+      }
+      
+      var renderMedia = function(doc) {
+        var ret = doc.player;
+        
+        if (doc.media.startsWith('yt')) {
+          var url = doc.media.replace('yt ', '');
+          var autoPlay = getAutoPlayStatus();
+          
+          // create youtube frame
+          ret = '<iframe title="YouTube video player" class="youtube-player" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/' + url + '?autoplay=' + autoPlay + '" frameborder="0" allowFullScreen></iframe>'
+        }
+        else if (doc.media.startsWith('imgurmp4')) {
+          var url = doc.media.replace('imgurmp4 ', '');
+          
+          ret = '<blockquote class="imgur-embed-pub" lang="en" data-id="' + url + '"><a href="//imgur.com/' + url + '">Title here</a></blockquote><' + 'script async src="//s.imgur.com/min/embed.js" charset="utf-8"></' + 'script>';
+        }
+                
+        return ret;
+      }
+      
+      var socket = io();
+      
+      // use this later to re-start the session
+      // $('form').submit(function(){
+      //   socket.emit('chat message', $('#m').val());
+      //   $('#m').val('');
+      //   return false;
+      // });
+      
+      socket.on('chat message', function(msg) {
+        var docs = JSON.parse(msg);
+
+        var render = '';
+
+        // add each of our docs       
+        for (var i = 0; docs.length > i; i++) {
+          render = '';
+          render += renderHead(docs[i]); 
+          render += renderMedia(docs[i]);
+          $('#messages').prepend($('<li>').html(render));  
+        }
+      });
+    </script>
+  </body>
+</html>
