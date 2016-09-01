@@ -29,8 +29,8 @@
     <form action="">
       <p>Enable YouTube autoplay</p>
       <input id="youtubeAutoplay" type="checkbox" checked>
-      <button id="next">Next Play</button>
-      <button id="stop">Stop Play</button>
+      <button id="next" type="button">Next Play</button>
+      <button id="stop" type="button">Stop</button>
       <button>Reset everything (not working yet)</button>
     </form>
     <script src="//cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -40,6 +40,7 @@
       var playerQueue = [];
       var timeBeforeNextVideo = 30000;
       var currentDocId = 0;
+      var stopPlaying = false;
       
       var getAutoPlayStatus = function () {
         // determine auto play status
@@ -80,68 +81,68 @@
         return ret;
       }
       
-      var socket = io();
-      
       var pushToGlobalQueue = function (docs) {
-          var doc = docs[0];
-          // add a seen field, add to our global queue
-          doc.status = "on deck";
-          playerQueue.push(doc);
+          var doc;
+          for (var i = 0; docs.length > i; i++) {
+            doc = docs[i];  
+            // add a seen field, add to our global queue
+            doc.status = "on deck";
+            playerQueue.push(doc);
+            console.log('doc queued', doc.player, doc);
+          }
       }
       
       var fireNextVideo = function () {
-        // if (playerQueue[currentDocId] && playerQueue[currentDocId].status == "on deck") {
-        //   // start our video, block the doc from showing
-        //   playerQueue[currentDocId].status = "playing";  
-          
-        //   // render our div
-          
-        //   // set our timer to go to the next video
-          
-        //   setTimeout(timeBeforeNextVideo, fireNextVideo);
-        // } 
-        // else if (playerQueue[currentDocId] && playerQueue[currentDocId].status == "playing") {
-          
-        // }
-        
         console.log('entered firenextvideo');
+        if (playerQueue[currentDocId] && playerQueue[currentDocId].status == 'playing') {
+          // should be the end of the play
+          console.log('- entered close play');
+          playerQueue[currentDocId].status == 'done';
+          
+          // check our stop state
+          if (!stopPlaying) {
+            currentDocId++;
+          }
+        }
         
-        if ((currentDocId + 1) >= playerQueue.length) {
+        if ((currentDocId + 1) > playerQueue.length) {
           // skip playing the next one, we are at the max video
           console.log('- entered skip');
-          setTimeout(fireNextVideo, timeBeforeNextVideo);
         }
-        else {
+        else if (!stopPlaying) {
           console.log('- entered play');
           // play this current one
-          currentDocId++;
           playerQueue[currentDocId].status = 'playing';
           renderInner(playerQueue[currentDocId]);
         }
+        
+        setTimeout(fireNextVideo, timeBeforeNextVideo);
       };
       
-      // use this later to re-start the session
-      // $('form').submit(function(){
-      //   socket.emit('chat message', $('#m').val());
-      //   $('#m').val('');
-      //   return false;
-      // });
-      
-      socket.on('chat message', function(msg) {
-        var docs = JSON.parse(msg);
+      // init
+      var socket = io();
+      $(document).ready(function() {
+        // stop our media player from playing the next video
+        $('#stop').click(function() {
+          var currentState = $('#stop').text();
+          if (currentState == "Stop") {
+            stopPlaying = true;
+            $('#stop').text('Resume');
+          } 
+          else {
+            stopPlaying = false;
+            $('#stop').text('Stop');
+          }
+        });
         
-        pushToGlobalQueue(docs);
+        // start our socket listening 
+        socket.on('chat message', function(msg) {
+          var docs = JSON.parse(msg);
+          
+          pushToGlobalQueue(docs);
+        });
         
         fireNextVideo();
-
-        // // add each of our docs 
-        // var render = '';      
-        // for (var i = 0; docs.length > i; i++) {
-        //   render = '';
-        //   render += renderHead(docs[i]); 
-        //   render += renderMedia(docs[i]);
-        //   $('#messages').prepend($('<li>').html(render));  
-        // }
       });
     </script>
   </body>
