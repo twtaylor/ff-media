@@ -14,9 +14,9 @@ const getInterval = 10000;
 var startedAt = new Date();
 
 // set up our observable to emit updates
-const getPlayerChanges = Rx.Observable
-    .interval(getInterval)
-    .timeInterval();
+var getPlayerChanges;
+   
+const emptyObservable = Rx.Observable.empty();
     
 // serve our html
 app.get('/', function(req, res){
@@ -24,21 +24,19 @@ app.get('/', function(req, res){
     res.sendFile(serverPath);
 });
 
+function getSmallTime (date) {
+    return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + 
+":" + date.getMilliseconds();
+}
+
 function pushPlayerChange() {
     var start = new Date();
     // get our time, this is what we'll use for any previous entries
     playerHelpers.getMostRecentUpdates(function(docs) {
         var end = new Date();
         
-        console.log('get most recent updates started:', start, ' and ended at: ', end);
+        console.log('- get most recent updates started:', getSmallTime(start), ' and ended at: ', getSmallTime(end));
         
-        // construct our message
-        // var msg = '';
-        // for (var i = 0; docs.length > i; i++) {
-        //     msg += '<p>player: ' + docs[i].player + ' youtube: ' + docs[i].youtube + '</p>';
-        // }
-         
-        console.log('2) push player changes at: ', new Date());
         io.emit('chat message', JSON.stringify(docs));
     }, startedAt);
 }
@@ -48,7 +46,9 @@ function getPlayerChange () {
     var start = new Date();
     playerHelpers.getPlayerSelectedUpdates(function() { 
         var end = new Date();
-        console.log('1) player sync started: ', start, ' and done at: ', end);
+        var startDebug = 
+        
+        console.log('- player sync started: ', getSmallTime(start), ' and done at: ', getSmallTime(end));
         
         // now push our updates to the client
         pushPlayerChange(); 
@@ -56,12 +56,20 @@ function getPlayerChange () {
 }
 
 io.on('connection', function(socket) {
-    console.log('connection established at: ', new Date());
+    console.log('CONNECTION established at: ', getSmallTime(new Date()));
     
     // clear our datasheets, start our listener
     playerHelpers.getPlayerData(function() { 
-        console.log('refreshed all of our players')
-        getPlayerChanges.subscribe(getPlayerChange);
+        console.log('- refreshed all of our players')
+        getPlayerChanges = Rx.Observable
+            .interval(getInterval)
+            .timeInterval()
+            .subscribe(getPlayerChange);
+        });
+    
+    socket.on('disconnect', function() {
+        console.log('DISCONNECT fired');
+        getPlayerChanges.dispose();
     });
 });
 

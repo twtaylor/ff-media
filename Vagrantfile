@@ -69,3 +69,8 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 end
+
+sudo apt-get upgrade 
+sudo apt-get install nodejs-legacy
+sudo apt-get install npm 
+sudo apt-get install mongodb

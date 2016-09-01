@@ -13,20 +13,34 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
+      #viewer { width: 100%;
+        height: 100vh;
+        padding: 5px;
+        display: inline-block;
+        position: fixed;
+        top: 0px;
+        left: 0px; 
+      }
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
+    <div id="viewer">
+    </div>
     <form action="">
-      <!--<button>Send</button>
-      <input id="m" autocomplete="off" />-->
       <p>Enable YouTube autoplay</p>
       <input id="youtubeAutoplay" type="checkbox" checked>
+      <button id="next">Next Play</button>
+      <button id="stop">Stop Play</button>
       <button>Reset everything (not working yet)</button>
     </form>
     <script src="//cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script>
+      var playerQueue = [];
+      var timeBeforeNextVideo = 30000;
+      var currentDocId = 0;
+      
       var getAutoPlayStatus = function () {
         // determine auto play status
           var autoPlay = 0;
@@ -34,6 +48,10 @@
             autoPlay = 1;
           }
           return autoPlay;
+      }
+      
+      var renderInner = function (doc) {
+        $('#viewer').html(renderHead(doc) + renderMedia(doc));
       }
       
       var renderHead = function (doc) {
@@ -46,7 +64,6 @@
       
       var renderMedia = function(doc) {
         var ret = doc.player;
-        
         if (doc.media.startsWith('yt')) {
           var url = doc.media.replace('yt ', '');
           var autoPlay = getAutoPlayStatus();
@@ -65,6 +82,44 @@
       
       var socket = io();
       
+      var pushToGlobalQueue = function (docs) {
+          var doc = docs[0];
+          // add a seen field, add to our global queue
+          doc.status = "on deck";
+          playerQueue.push(doc);
+      }
+      
+      var fireNextVideo = function () {
+        // if (playerQueue[currentDocId] && playerQueue[currentDocId].status == "on deck") {
+        //   // start our video, block the doc from showing
+        //   playerQueue[currentDocId].status = "playing";  
+          
+        //   // render our div
+          
+        //   // set our timer to go to the next video
+          
+        //   setTimeout(timeBeforeNextVideo, fireNextVideo);
+        // } 
+        // else if (playerQueue[currentDocId] && playerQueue[currentDocId].status == "playing") {
+          
+        // }
+        
+        console.log('entered firenextvideo');
+        
+        if ((currentDocId + 1) >= playerQueue.length) {
+          // skip playing the next one, we are at the max video
+          console.log('- entered skip');
+          setTimeout(fireNextVideo, timeBeforeNextVideo);
+        }
+        else {
+          console.log('- entered play');
+          // play this current one
+          currentDocId++;
+          playerQueue[currentDocId].status = 'playing';
+          renderInner(playerQueue[currentDocId]);
+        }
+      };
+      
       // use this later to re-start the session
       // $('form').submit(function(){
       //   socket.emit('chat message', $('#m').val());
@@ -74,16 +129,19 @@
       
       socket.on('chat message', function(msg) {
         var docs = JSON.parse(msg);
+        
+        pushToGlobalQueue(docs);
+        
+        fireNextVideo();
 
-        var render = '';
-
-        // add each of our docs       
-        for (var i = 0; docs.length > i; i++) {
-          render = '';
-          render += renderHead(docs[i]); 
-          render += renderMedia(docs[i]);
-          $('#messages').prepend($('<li>').html(render));  
-        }
+        // // add each of our docs 
+        // var render = '';      
+        // for (var i = 0; docs.length > i; i++) {
+        //   render = '';
+        //   render += renderHead(docs[i]); 
+        //   render += renderMedia(docs[i]);
+        //   $('#messages').prepend($('<li>').html(render));  
+        // }
       });
     </script>
   </body>
