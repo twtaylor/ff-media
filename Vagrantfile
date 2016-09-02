@@ -70,7 +70,7 @@ Vagrant.configure(2) do |config|
   # SHELL
 end
 
-sudo apt-get upgrade 
-sudo apt-get install nodejs-legacy
-sudo apt-get install npm 
-sudo apt-get install mongodb
+# sudo apt-get upgrade 
+# sudo apt-get install nodejs-legacy
+# sudo apt-get install npm 
+# sudo apt-get install mongodb
