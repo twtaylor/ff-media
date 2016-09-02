@@ -49,8 +49,14 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-countdown/2.0.2/jquery.countdown.min.js"></script>
     
     <script>
+      // constants
+      const timeBeforeNextVideo = 30000;
+      const timeSlicePartition = 10;
+      const timeSlice = timeBeforeNextVideo / timeSlicePartition;
+      
+      // working variables
+      var timeSliceCount = 0;
       var playerQueue = [];
-      var timeBeforeNextVideo = 30000;
       var currentDocId = 0;
       var stopPlaying = false;
       
@@ -91,6 +97,7 @@
           var url = urlParts[1];
           var time = '';
           if (urlParts.length > 2) {
+            // we can have times come back in forms of 1m20s and 30s so we need to break those up based on that formatting
             var timeParts = urlParts[2].split('m');
             var timePassed = 0;
             if (timeParts.length > 1) {
@@ -136,8 +143,8 @@
       }
       
       var fireNextVideo = function () {
-        console.log('entered firenextvideo');
-        if (playerQueue[currentDocId] && playerQueue[currentDocId].status == 'playing') {
+        console.log('start fireNextVideo');
+        if (playerQueue[currentDocId] && playerQueue[currentDocId].status == 'playing' && (timeSliceCount % timeSlicePartition == 0)) {
           // should be the end of the play
           console.log('- entered close play');
           playerQueue[currentDocId].status == 'done';
@@ -152,16 +159,21 @@
           // skip playing the next one, we are at the max video
           console.log('- entered skip');
         }
-        else if (!stopPlaying) {
+        else if (!stopPlaying && (playerQueue[currentDocId] && playerQueue[currentDocId].status != 'playing')) {
           console.log('- entered play');
           $('#countdown').countdown('destroy');
           $('#countdown').countdown({ until: '+' + (timeBeforeNextVideo / 1000).toString() + 's', compact: true, format: 'S' });
           // play this current one
           playerQueue[currentDocId].status = 'playing';
           renderInner(playerQueue[currentDocId]);
+          // reset our timeSliceCount
+          timeSliceCount = 0;
         }
         
-        setTimeout(fireNextVideo, timeBeforeNextVideo);
+        timeSliceCount++;
+        console.log('+ time slice', timeSliceCount);
+        
+        setTimeout(fireNextVideo, timeSlice);
       };
       
       // init
