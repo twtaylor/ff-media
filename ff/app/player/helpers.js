@@ -54,7 +54,7 @@ var Helpers = {
                     // now bulk save
                     Player.collection.insert(players, {}, function ( err, docs ) {
                         if (!err) {
-                            console.log('MONGO players saved: ', docs.insertedCount);
+                            console.log('- players saved in mongo: ', docs.insertedCount);
                         }
                         else {
                             console.log('error storing players', err);
@@ -83,13 +83,13 @@ var Helpers = {
             },
             function getInfoAndWorksheets(step) {
                 doc.getInfo(function(err, info) {
-                console.log('LOADED Google Doc: ' + info.title + ' by ' + info.author.email);
+                console.log('- loaded Google Doc: ' + info.title + ' by ' + info.author.email);
                 
                 // retrieve the sheet we'll be working with 
                 for (var i = 0; info.worksheets.length > i; i++) {
                     sheet = info.worksheets[i];
                     if (sheet.title == 'Player Selection') {
-                        console.log('LOADED DATA SHEET ' + (i + 1) + ': ' + sheet.title+' '+sheet.rowCount+'x'+sheet.colCount);
+                        console.log('- loaded DATA SHEET ' + (i + 1) + ': ' + sheet.title+' '+sheet.rowCount+'x'+sheet.colCount);
                         that.dataSheet = sheet;
                     }
                 }

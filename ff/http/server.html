@@ -5,11 +5,20 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      h2 { font: 26px Helvetica, Arial; color: blue; }
-      form { background: #000; color: red; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; margin-right: .5%; float: left; }
-      form p { float: left; width: 10%; }
-      form button { background: rgb(130, 224, 255); border: none; padding: 10px; }
+      h2 {     font: 34px Impact, Charcoal, sans-serif;
+        color: black;
+        padding-bottom: 2px;
+        text-align: center;
+      }
+      form { background: darkgrey; opacity: 0.7; color: blue; padding: 3px; position: fixed; bottom: 0; left: 0; width: 18%; }
+      form input { border: 0; padding: 10px; position:relative; top:14px; margin-left:10px; float: left; }
+      form p { float: left;
+        padding: 6px;
+        font-weight: bolder;
+        display: inline-block;
+        position: relative;
+        top: 10px;  }
+      form button { background: rgb(130, 224, 255); border: none; padding: 10px; float:left; margin: 5px; }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
@@ -27,11 +36,10 @@
     <div id="viewer">
     </div>
     <form action="">
-      <p>Enable YouTube autoplay</p>
-      <input id="youtubeAutoplay" type="checkbox" checked>
-      <button id="next" type="button">Next Play</button>
       <button id="stop" type="button">Stop</button>
-      <button>Reset everything (not working yet)</button>
+      <button id="reset" type="button">Reset Everything</button>
+      <p>YouTube autoplay</p>
+      <input id="youtubeAutoplay" type="checkbox" checked>
     </form>
     <script src="//cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
@@ -41,6 +49,11 @@
       var timeBeforeNextVideo = 30000;
       var currentDocId = 0;
       var stopPlaying = false;
+      
+      var init = function () {
+        playerQueue = [];
+        currentDocId = 0;
+      };
       
       var getAutoPlayStatus = function () {
         // determine auto play status
@@ -70,7 +83,7 @@
           var autoPlay = getAutoPlayStatus();
           
           // create youtube frame
-          ret = '<iframe title="YouTube video player" class="youtube-player" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/' + url + '?autoplay=' + autoPlay + '" frameborder="0" allowFullScreen></iframe>'
+          ret = '<iframe width="100%" height="95%" src="https://www.youtube.com/tv#/watch?v=' + url + '&autoplay=' + autoPlay + '&controls=0" frameborder="0" allowFullScreen></iframe>'
         }
         else if (doc.media.startsWith('imgurmp4')) {
           var url = doc.media.replace('imgurmp4 ', '');
@@ -85,10 +98,16 @@
           var doc;
           for (var i = 0; docs.length > i; i++) {
             doc = docs[i];  
-            // add a seen field, add to our global queue
-            doc.status = "on deck";
-            playerQueue.push(doc);
-            console.log('doc queued', doc.player, doc);
+            // make sure this doc isn't in our docs already
+            if (_.where(playerQueue, { player: doc.player }).length == 0) {
+              // add a seen field, add to our global queue
+              doc.status = "on deck";
+              playerQueue.push(doc);
+              console.log('doc queued', doc.player);
+            }
+            else {
+              console.log('doc already exists, not added', doc.player);
+            }
           }
       }
       
@@ -122,6 +141,8 @@
       // init
       var socket = io();
       $(document).ready(function() {
+        init();
+        
         // stop our media player from playing the next video
         $('#stop').click(function() {
           var currentState = $('#stop').text();
@@ -133,6 +154,16 @@
             stopPlaying = false;
             $('#stop').text('Stop');
           }
+        });
+        
+        $('#reset').click(function() {
+          var formerPlaying = stopPlaying;
+          stopPlaying = true;
+          // basically have to isolate this so we don't play in the middle of a reset
+          socket.emit('chat message', 'reset');
+          init();
+          // resume whatever we were doing
+          stopPlaying = formerPlaying;
         });
         
         // start our socket listening 

@@ -55,10 +55,7 @@ function getPlayerChange () {
     });
 }
 
-io.on('connection', function(socket) {
-    console.log('CONNECTION established at: ', getSmallTime(new Date()));
-    
-    // clear our datasheets, start our listener
+function loadObservable () {
     playerHelpers.getPlayerData(function() { 
         console.log('- refreshed all of our players')
         getPlayerChanges = Rx.Observable
@@ -66,6 +63,21 @@ io.on('connection', function(socket) {
             .timeInterval()
             .subscribe(getPlayerChange);
         });
+}
+
+io.on('connection', function(socket) {
+    console.log('CONNECTION established at: ', getSmallTime(new Date()));
+    
+    // clear our datasheets, start our listener
+    loadObservable();
+        
+    // reset everything if we get a message to
+    socket.on('chat message', function(msg) {
+        if (msg == 'reset') {
+            console.log('RESET fired');
+            loadObservable();
+        }
+    });
     
     socket.on('disconnect', function() {
         console.log('DISCONNECT fired');
