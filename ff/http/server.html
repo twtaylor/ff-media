@@ -55,7 +55,7 @@
       const timeSlice = timeBeforeNextVideo / timeSlicePartition;
       
       // working variables
-      var timeSliceCount = 0;
+      var timeSliceCount = 1;
       var playerQueue = [];
       var currentDocId = 0;
       var stopPlaying = false;
@@ -63,6 +63,7 @@
       var init = function () {
         playerQueue = [];
         currentDocId = 0;
+        timeSliceCount = 1;
       };
       
       var getAutoPlayStatus = function () {
