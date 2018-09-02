@@ -30,3 +30,12 @@ Run ``python2.7 conversion.py``
 6. Disable or Enable (redommended) sound:
 
 or use firefox :)
+
+# Adding credentials
+
+Add credentials from the google apps script account in the root directory here. Should just be able to download the .json file.
+
+# Goals for next year
+
+Run from anywhere for remote people
+Add angular2/6 to the iface
