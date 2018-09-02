@@ -39,3 +39,4 @@ Add credentials from the google apps script account in the root directory here. 
 
 Run from anywhere for remote people
 Add angular2/6 to the iface
+Add ability to just have clips play with a reasonable cut 
