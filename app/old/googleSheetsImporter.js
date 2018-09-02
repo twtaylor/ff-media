@@ -8,10 +8,11 @@ var Array = require('array');
 // get our mongo db up
 mongoose.connect('mongodb://localhost/ffmedia');
 
+//var selectedKey = 3; // 2016
+var selectedKey = 4; // 2018
+
 // session key
 var sessionKey = Date.parse("2016-08-14T23:46:08.001Z");
-
-
  
 async.series([
   function setAuth(step) {
@@ -56,6 +57,7 @@ async.series([
     // get all of the persons
     Player.find({ created: sessionKey }, function (error, persons) { 
         var allPersons = new Array(persons);
+
         dataSheet.getCells({
           'min-row': 1,
           'max-row': 10,
@@ -65,11 +67,13 @@ async.series([
         }, function(err, cells) {
           if (!err) {
               var chosenBy, key;
+
               // our updated date
               var updated = new Date();
               
               for (var i = 0; cells.length > i; i++) {
                 var cell = cells[i];
+
                 // col 1 - our selection
                 if (cell.col == 1) {
                     // start a new row
@@ -77,18 +81,21 @@ async.series([
                 }
                 
                 // col 3 - our selected key
-                if (cell.col == 3) {
+                if (cell.col == selectedKey) {
                     key = cell.value;
                     
                     // find it there's any differences we need to update
                     var foundPerson = allPersons.find(function(p) { return p.rank == key; });
                     if (foundPerson && foundPerson.chosenBy != chosenBy) {
                         // write out our update to the mongo database 
-                        Player.findOneAndUpdate({ rank: key, created: sessionKey }, {$set: { chosenBy: chosenBy, updated: updated }},function(err, doc){
-                            if (err) { 
-                                console.log("Something wrong when updating data for " + key);
+                        Player.findOneAndUpdate({ rank: key, created: sessionKey }, 
+                            { $set: { chosenBy: chosenBy, updated: updated } },
+                            function(err, doc) {
+                                if (err) { 
+                                    console.log("Something wrong when updating data for " + key);
+                                }
                             }
-                        });
+                        );
                     }
                 }
             }

@@ -9,14 +9,21 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/ffmedia');
 
 // consts - these are wear our data 
-var doc = new GoogleSpreadsheet('1yUeMhafkVw1L87SY3a1NvGCCfOx8U6I173dfv7ctO6A');
+//var doc = new GoogleSpreadsheet('1yUeMhafkVw1L87SY3a1NvGCCfOx8U6I173dfv7ctO6A'); // 2016
+var doc = new GoogleSpreadsheet('1pgrKa4CTsItN9kGvnkBH8mhbgbSjwAdZLy1hoYcB0-o'); // 2018
+
+//var title = 'Player Selection'; // 2016
+var title = 'Enter your pick HERE'; //2018
+
+// var selectedKey = 3; // 2016
+var selectedKey = 4; // 2018
 
 // load our data up
 var Helpers = {
     // dataSheet component we load
     dataSheet: null, 
     // retrieves player data for our entire DB - pretty much to reset the DB
-    getPlayerData: function ( final ) {
+    getPlayerData: function (final) {
         if (!this.dataSheet) {
             this.loadDataSheet(this.loadPlayerData, final);
         }
@@ -40,13 +47,17 @@ var Helpers = {
                     var players = [];
                     for (var i = 0; rows.length > i; i++) {
                         var row = rows[i];
+
                         // Store our row
-                        var player = { player: row.player, 
+                        var player = { 
+                            player: row.player, 
                             rank: row.rank,
                             chosenBy: row.assigninitialsbelow, 
-                            media: row.media, 
+                            media: row.mediaforplayer,
+                            mediaperson: row.mediaforperson,
                             created: date, 
-                            seen: false };
+                            seen: false,
+                        };
                             
                         players.push(player);
                     }
@@ -83,23 +94,27 @@ var Helpers = {
             },
             function getInfoAndWorksheets(step) {
                 doc.getInfo(function(err, info) {
-                console.log('- loaded Google Doc: ' + info.title + ' by ' + info.author.email);
+                    if (err) {
+                        console.error('Error in get info and worksheets', err);
+                    } else {
+                        console.log('- loaded Google Doc: ' + info.title + ' by ' + info.author.email);
                 
-                // retrieve the sheet we'll be working with 
-                for (var i = 0; info.worksheets.length > i; i++) {
-                    sheet = info.worksheets[i];
-                    if (sheet.title == 'Player Selection') {
-                        console.log('- loaded DATA SHEET ' + (i + 1) + ': ' + sheet.title+' '+sheet.rowCount+'x'+sheet.colCount);
-                        that.dataSheet = sheet;
+                        // retrieve the sheet we'll be working with 
+                        for (var i = 0; info.worksheets.length > i; i++) {
+                            sheet = info.worksheets[i];
+                            if (sheet.title === title) {
+                                console.log('- loaded DATA SHEET ' + (i + 1) + ': ' + sheet.title+' '+sheet.rowCount+'x'+sheet.colCount);
+                                that.dataSheet = sheet;
+                            }
+                        }
+                        
+                        step();
                     }
-                }
-                
-                step();
                 });
             }], 
             function (error, results) {
                 if (error) {
-                    console.log(error);    
+                    console.log('Error after getinfoandworksehets', error);    
                 }
                 
                 // call our fn but in this scope
@@ -107,12 +122,11 @@ var Helpers = {
                     // add final to our args
                     args.unshift(final);
                     next.apply(that, args);
-                }
-                else {
+                } else {
                     next.call(that, final);    
                 }
-                
-        });
+            }
+        );
     },
     getPlayerSelectedUpdates: function (  final ) {
         if (!this.dataSheet) {
@@ -126,15 +140,17 @@ var Helpers = {
         // get everyone of the persons
         this.dataSheet.getCells({
             'min-row': 1,
-            'max-row': 320,
+            'max-row': 300,
             'min-col': 1,
-            'max-col': 3, 
+            'max-col': 4, 
             'return-empty': true
         }, function(err, cells) {
-            if (!err) {
+            if (err) {
+                console.error('Error in playerSelectedUpdates:');
+                console.error(err);
+            } else {
                 // temporary storage 
                 var chosenBy, key;
-                //var updatedPersons = [];
                 
                 // our updated date
                 var updated = new Date();
@@ -145,14 +161,15 @@ var Helpers = {
                 // aggregate our updates               
                 for (var i = 0; cells.length > i; i++) {
                     var cell = cells[i];
+
                     // col 1 - our selection
                     if (cell.col == 1) {
                         // start a new row
                         chosenBy = cell.value;
                     }
                     
-                    // col 3 - our selected key
-                    if (cell.col == 3) {
+                    // col 3/5 - our selected key
+                    if (cell.col === selectedKey) {
                         key = cell.value;
                         
                         // update our item if it has changed
@@ -162,6 +179,10 @@ var Helpers = {
                 }
                 
                 bulk.execute(function (error) {
+                    if (error) {
+                        console.error('Error in bulk updater:', error);
+                    }
+
                     next();                   
                 });
             }
@@ -171,16 +192,22 @@ var Helpers = {
         var that = this;
         
        // find our most recent updates made to the player
-        Player.find().where('updated').gt(fromDate)
+        Player.find()
+            .where('updated')
+            .gt(fromDate)
             .where('seen').equals(false)
             .sort('-updated')            
-            .exec(function(err, docs){ 
-                if (docs.length > 0) {
+            .exec(function(err, docs){
+                if (err) {
+                    console.error('Error in updated', err)
+                } else if (docs.length > 0) {
+                    console.log(`++ Updates detected for ${docs.length} docs`);
+
                     // record these docs, update them and then send them down to the final
                     var bulk = Player.collection.initializeOrderedBulkOp();
                     
                     for (var i = 0; docs.length > i; i++) {
-                    bulk.find({ '_id': docs[i]._id }).update({$set: { seen: true }});
+                        bulk.find({ '_id': docs[i]._id }).update({$set: { seen: true }});
                     }
                     
                     bulk.execute(function (error) {
@@ -188,7 +215,7 @@ var Helpers = {
                             final.call(that, docs);    
                         }
                         else {
-                            console.log('error after a bulk execute: ', error);
+                            console.error('error after a bulk execute: ', error);
                         }
                     });
                 }

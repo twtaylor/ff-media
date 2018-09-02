@@ -1,5 +1,6 @@
 // definitions
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
@@ -17,12 +18,8 @@ var startedAt = new Date();
 var getPlayerChanges;
    
 const emptyObservable = Rx.Observable.empty();
-    
-// serve our html
-app.get('/', function(req, res){
-    var serverPath = path.resolve(__dirname + '/../http/server.html');
-    res.sendFile(serverPath);
-});
+
+app.use('/', express.static(path.join(__dirname, '..', 'http')))
 
 function getSmallTime (date) {
     return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + 
@@ -46,7 +43,6 @@ function getPlayerChange () {
     var start = new Date();
     playerHelpers.getPlayerSelectedUpdates(function() { 
         var end = new Date();
-        var startDebug = 
         
         console.log('- player sync started: ', getSmallTime(start), ' and done at: ', getSmallTime(end));
         

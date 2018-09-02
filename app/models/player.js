@@ -9,6 +9,7 @@ var schema = new mongoose.Schema({
   , player      : String
   , chosenBy     : String
   , media     : String
+  , mediaPerson : String 
   , created     : Date
   , updated     : Date 
   , seen    :   Boolean
